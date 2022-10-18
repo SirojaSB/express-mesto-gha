@@ -16,7 +16,9 @@ module.exports.createCard = async (req, res) => {
     const { name, link } = req.body;
     const card = await Card.create({ name, link, owner: req.user._id });
 
-    res.send(card);
+    res.send({
+      message: 'Карточка успешно создана',
+    });
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       return res.status(400).send({ message: 'Некорректные данные' });
@@ -35,6 +37,7 @@ module.exports.deleteCard = async (req, res) => {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
     }
+
     if (err instanceof mongoose.Error.CastError) {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
@@ -56,6 +59,7 @@ module.exports.likeCard = async (req, res) => {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
     }
+
     if (err instanceof mongoose.Error.CastError) {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
@@ -77,6 +81,7 @@ module.exports.dislikeCard = async (req, res) => {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
     }
+
     if (err instanceof mongoose.Error.CastError) {
       return res.status(400).send({ message: 'Некорректные данные' });
     }

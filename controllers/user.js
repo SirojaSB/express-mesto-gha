@@ -23,7 +23,7 @@ module.exports.getUser = async (req, res) => {
     if (err instanceof mongoose.Error.CastError) {
       return res.status(400).send({ message: 'Некорректные данные', err });
     }
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };
 
@@ -38,7 +38,7 @@ module.exports.createUser = async (req, res) => {
     if (err instanceof mongoose.Error.ValidationError) {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };
 
