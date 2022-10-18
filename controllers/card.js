@@ -1,5 +1,5 @@
+const mongoose = require('mongoose');
 const Card = require('../models/card');
-const mongoose = require("mongoose");
 
 module.exports.getAllCards = async (req, res) => {
   try {
@@ -22,13 +22,15 @@ module.exports.createCard = async (req, res) => {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
 
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };
 
 module.exports.deleteCard = async (req, res) => {
   try {
-    await Card.findByIdAndRemove(req.params.cardId).orFail(new Error('NotFound'));
+    const card = await Card.findByIdAndRemove(req.params.cardId).orFail(new Error('NotFound'));
+
+    res.send(card);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
@@ -37,7 +39,7 @@ module.exports.deleteCard = async (req, res) => {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
 
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };
 
@@ -58,7 +60,7 @@ module.exports.likeCard = async (req, res) => {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
 
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };
 
@@ -79,6 +81,6 @@ module.exports.dislikeCard = async (req, res) => {
       return res.status(400).send({ message: 'Некорректные данные' });
     }
 
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
   }
 };

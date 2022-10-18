@@ -13,7 +13,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '634d1e42e8dcdeb12aa8ab56'
+    _id: '634d1e42e8dcdeb12aa8ab56',
   };
 
   next();
@@ -23,7 +23,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardRouter);
 app.use('*', (req, res) => {
   res.status(404).send({
-    message: 'Запрашиваемый адрес не найден'
+    message: 'Запрашиваемый адрес не найден',
   });
 });
 
