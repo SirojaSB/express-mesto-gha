@@ -3,18 +3,18 @@ const mongoose = require('mongoose');
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: true,
+    required: true,
     minlength: [2, 'минимальная длина поля 2 символа'],
     maxlength: [30, 'максимальная длина поля 30 символов'],
   },
   link: {
     type: String,
-    require: true,
+    required: true,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    require: true,
+    required: true,
   },
   likes: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -23,7 +23,7 @@ const cardSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 }, {
   versionKey: false,

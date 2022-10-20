@@ -16,9 +16,7 @@ module.exports.createCard = async (req, res) => {
     const { name, link } = req.body;
     const card = await Card.create({ name, link, owner: req.user._id });
 
-    res.send({
-      message: 'Карточка успешно создана',
-    });
+    return res.send(card);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
       return res.status(400).send({ message: 'Некорректные данные' });
@@ -32,7 +30,7 @@ module.exports.deleteCard = async (req, res) => {
   try {
     const card = await Card.findByIdAndRemove(req.params.cardId).orFail(new Error('NotFound'));
 
-    res.send(card);
+    return res.send(card);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
@@ -54,7 +52,7 @@ module.exports.likeCard = async (req, res) => {
       { new: true },
     ).orFail(new Error('NotFound'));
 
-    res.send(card);
+    return res.send(card);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
@@ -76,7 +74,7 @@ module.exports.dislikeCard = async (req, res) => {
       { new: true },
     ).orFail(new Error('NotFound'));
 
-    res.send(card);
+    return res.send(card);
   } catch (err) {
     if (err.message === 'NotFound') {
       return res.status(404).send({ message: 'Пользователь не найдет' });
