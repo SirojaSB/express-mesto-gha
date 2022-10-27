@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Card = require('../models/card');
 const BadRequestError = require('../utils/errors/badRequestError');
 const NotFoundError = require('../utils/errors/notFoundError');
-const ConflictError = require('../utils/errors/conflictError');
+const ForbiddenError = require('../utils/errors/forbiddenError');
 
 module.exports.getAllCards = async (req, res, next) => {
   try {
@@ -34,7 +34,7 @@ module.exports.deleteCard = async (req, res, next) => {
     const card = await Card.findByIdAndRemove(req.params.cardId).orFail(new NotFoundError('Карточка не найдена'));
 
     if (req.user._id !== card.owner) {
-      next(new ConflictError('Нет доступа к удалению этой карточки'));
+      return new ForbiddenError('Нет доступа к удалению этой карточки');
     }
 
     return res.send(card);

@@ -111,7 +111,7 @@ module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = User.findUserByCredentials(email, password);
+    const user = await User.findUserByCredentials(email, password);
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '7d' });
 
