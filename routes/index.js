@@ -11,9 +11,9 @@ router.post('/signup', validateCreateUserData, createUser);
 
 router.use(verifyToken);
 
-router.use('/users', verifyToken, userRouter);
-router.use('/cards', verifyToken, cardRouter);
-router.use('*', verifyToken, (req, res, next) => {
+router.use('/users', userRouter);
+router.use('/cards', cardRouter);
+router.use((req, res, next) => {
   next(new NotFoundError('Некорректный URL адрес'));
 });
 
