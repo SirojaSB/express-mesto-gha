@@ -1,48 +1,68 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { JWT_SECRET_KEY } = require('../utils/constants');
+const BadRequestError = require('../utils/errors/badRequestError');
+const NotFoundError = require('../utils/errors/notFoundError');
+const ConflictError = require('../utils/errors/conflictError');
 
-module.exports.getAllUsers = async (req, res) => {
+module.exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
 
     res.send(users);
   } catch (err) {
-    res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    next(err);
   }
 };
 
-module.exports.getUser = async (req, res) => {
+module.exports.getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).orFail(new Error('NotFound'));
+    const user = await User.findById(req.params.id).orFail(new NotFoundError('Пользователь не найден'));
 
     return res.send(user);
   } catch (err) {
-    if (err.message === 'NotFound') {
-      return res.status(404).send({ message: 'Пользователь не найдет' });
-    }
     if (err instanceof mongoose.Error.CastError) {
-      return res.status(400).send({ message: 'Некорректные данные', err });
+      next(new BadRequestError('Некорректные данные'));
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return next(err);
   }
 };
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   try {
-    const { name, about, avatar } = req.body;
+    const {
+      name,
+      about,
+      avatar,
+      email,
+      password,
+    } = req.body;
 
-    const user = await User.create({ name, about, avatar });
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    });
 
     return res.send(user);
   } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send({ message: 'Некорректные данные' });
+    if (err.code === 11000) {
+      next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    if (err instanceof mongoose.Error.ValidationError) {
+      next(new BadRequestError('Некорректные данные'));
+    }
+    return next(err);
   }
 };
 
-module.exports.updateProfileInfo = async (req, res) => {
+module.exports.updateProfileInfo = async (req, res, next) => {
   try {
     const { name, about } = req.body;
 
@@ -58,13 +78,13 @@ module.exports.updateProfileInfo = async (req, res) => {
     return res.send(newProfileInfo);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send({ message: 'Некорректные данные' });
+      next(new BadRequestError('Некорректные данные'));
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return next(err);
   }
 };
 
-module.exports.updateAvatar = async (req, res) => {
+module.exports.updateAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
 
@@ -81,8 +101,35 @@ module.exports.updateAvatar = async (req, res) => {
     return res.send(newAvatar);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      return res.status(400).send({ message: 'Некорректные данные' });
+      next(new BadRequestError('Некорректные данные'));
     }
-    return res.status(500).send({ message: 'На сервере произошла ошибка', err });
+    return next(err);
+  }
+};
+
+module.exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = User.findUserByCredentials(email, password);
+
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+
+    return res.send(token);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+module.exports.getUserInfo = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).orFail(new NotFoundError('Пользователь не найден'));
+
+    return res.send(user);
+  } catch (err) {
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequestError('Некорректные данные'));
+    }
+    return next(err);
   }
 };
