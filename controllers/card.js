@@ -22,7 +22,7 @@ module.exports.createCard = async (req, res, next) => {
     return res.send(card);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
 
     return next(err);
@@ -31,16 +31,18 @@ module.exports.createCard = async (req, res, next) => {
 
 module.exports.deleteCard = async (req, res, next) => {
   try {
-    const card = await Card.findByIdAndRemove(req.params.cardId).orFail(new NotFoundError('Карточка не найдена'));
+    const card = await Card.findById(req.params.cardId).orFail(new NotFoundError('Карточка не найдена'));
 
-    if (req.user._id !== card.owner) {
-      return new ForbiddenError('Нет доступа к удалению этой карточки');
+    if (!card.owner.equals(req.user._id)) {
+      return next(new ForbiddenError('Нет доступа к удалению этой карточки'));
     }
+
+    card.remove();
 
     return res.send(card);
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
 
     return next(err);
@@ -58,7 +60,7 @@ module.exports.likeCard = async (req, res, next) => {
     return res.send(card);
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
 
     return next(err);
@@ -76,7 +78,7 @@ module.exports.dislikeCard = async (req, res, next) => {
     return res.send(card);
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
 
     return next(err);

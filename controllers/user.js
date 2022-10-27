@@ -24,7 +24,7 @@ module.exports.getUser = async (req, res, next) => {
     return res.send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
     return next(err);
   }
@@ -50,13 +50,18 @@ module.exports.createUser = async (req, res, next) => {
       password: hash,
     });
 
-    return res.send(user);
+    return res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    });
   } catch (err) {
     if (err.code === 11000) {
-      next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
+      return next(new ConflictError('Пользователь с данным email уже зарегистрирован'));
     }
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
     return next(err);
   }
@@ -78,7 +83,7 @@ module.exports.updateProfileInfo = async (req, res, next) => {
     return res.send(newProfileInfo);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
     return next(err);
   }
@@ -101,7 +106,7 @@ module.exports.updateAvatar = async (req, res, next) => {
     return res.send(newAvatar);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
     return next(err);
   }
@@ -115,7 +120,7 @@ module.exports.login = async (req, res, next) => {
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET_KEY, { expiresIn: '7d' });
 
-    return res.send(token);
+    return res.send({ token });
   } catch (err) {
     return next(err);
   }
@@ -128,7 +133,7 @@ module.exports.getUserInfo = async (req, res, next) => {
     return res.send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      next(new BadRequestError('Некорректные данные'));
+      return next(new BadRequestError('Некорректные данные'));
     }
     return next(err);
   }

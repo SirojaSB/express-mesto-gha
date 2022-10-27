@@ -6,11 +6,11 @@ const {
   updateAvatar,
   getUserInfo,
 } = require('../controllers/user');
-const { validateUserInfo, validateUserAvatar } = require('../utils/userValidate');
+const { validateUserInfo, validateUserAvatar, validateUserId } = require('../utils/userValidate');
 
 userRouter.get('/', getAllUsers);
-userRouter.get('/:id', getUser);
 userRouter.get('/me', getUserInfo);
+userRouter.get('/:id', validateUserId, getUser);
 userRouter.patch('/me', validateUserInfo, updateProfileInfo);
 userRouter.patch('/me/avatar', validateUserAvatar, updateAvatar);
 
