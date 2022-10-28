@@ -13,6 +13,6 @@ router.use(verifyToken);
 
 router.use('/users', userRouter);
 router.use('/cards', cardRouter);
-router.use(() => Promise.reject(new NotFoundError('Некорректный URL адрес')));
+router.use('*', (req, res, next) => next(new NotFoundError('Некорректный URL адрес')));
 
 module.exports = router;
