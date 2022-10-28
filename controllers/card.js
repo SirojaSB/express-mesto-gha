@@ -37,7 +37,7 @@ module.exports.deleteCard = async (req, res, next) => {
       return next(new ForbiddenError('Нет доступа к удалению этой карточки'));
     }
 
-    card.remove();
+    await card.remove();
 
     return res.send(card);
   } catch (err) {

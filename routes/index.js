@@ -4,7 +4,7 @@ const cardRouter = require('./cards');
 const { createUser, login } = require('../controllers/user');
 const { verifyToken } = require('../middlewares/auth');
 const { validateLoginData, validateCreateUserData } = require('../utils/userValidate');
-const { NotFoundError } = require('../utils/errors/notFoundError');
+const NotFoundError = require('../utils/errors/notFoundError');
 
 router.post('/signin', validateLoginData, login);
 router.post('/signup', validateCreateUserData, createUser);
