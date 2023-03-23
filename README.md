@@ -1,32 +1,31 @@
-[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
+# Серверная часть проекта: Mesto.
 
-# Проект Mesto фронтенд + бэкенд
+### Полный проект: https://github.com/SirojaSB/react-mesto-api-full
 
-## Настройка бейджей статуса тестов
+"Mesto" - Сервис, позволяющий пользователям делиться своими изображениями и оценивать чужие.
 
-Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
-Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${имя_пользователя}` и `${имя_репозитория}`
-соответствующие значения.
+## Стек технологий:
 
-```
-[![Tests for sprint 13](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml) 
+- Expressjs
+- nodemon
+- MongoDB
+- mongoose
+- jsonwebtoken
+- celebrate
+- bcryptjs
 
-[![Tests for sprint 14](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml)
-```
+## Методы и роуты
 
-## Директории
-
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки
-
-Остальные директории вспомогательные, создаются при необходимости разработчиком
-
-## Запуск проекта
-
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
-
-## Ссылка на репозиторий
-
-https://github.com/SirojaSB/express-mesto-gha
+Метод | Роут | Описание
+----- |------|---------
+GET | `/users` | получить всех пользователей
+GET | `/users/:userId` | поучить пользователя по _id
+GET | `/users/me` | получить данные об авторизованном пользователе
+PATCH | `/users/me` | обновляет информацию о пользователе
+PATCH | `/users/me/avatar` | обновить аватар пользователя
+POST | `/users` | создать пользователя
+GET | `/cards` | получить все карточки
+POST | `/cards` | создать карточку
+DELETE | `/cards/:cardId` | удалить карточку по _id
+PUT | `/cards/:cardId/likes` | лайк карточке
+DELETE | `/cards/:cardId/likes` | дизлайк карточки
